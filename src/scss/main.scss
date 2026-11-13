@@ -297,6 +297,76 @@ section[id] {
     }
 }
 
+.hero {
+      padding: clamp(2.5rem, 7vw, 6rem) 0 clamp(3.5rem, 8vw, 7rem);
+      overflow: hidden
+    }
+
+    .hero .container {
+      display: grid;
+      gap: 3.5rem;
+      align-items: center
+    }
+
+    @media(min-width: 920px) {
+      .hero .container {
+        grid-template-columns: 1.15fr .85fr
+      }
+    }
+
+    .hero__title {
+      font: 800 clamp(2.9rem, 8.4vw, 6.4rem)/0.98 "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+      letter-spacing: -0.035em
+    }
+
+    .hero__title .line {
+      display: block
+    }
+
+    .hero__title .line--light {
+      font-weight: 300;
+      letter-spacing: -0.045em;
+      color: #6a6d78
+    }
+
+    .hero__title .pill {
+      display: inline-grid;
+      place-items: center;
+      vertical-align: .08em;
+      margin-inline: .06em;
+      width: 1.55em;
+      height: .86em;
+      border-radius: 999px;
+      background: var(--bg);
+      color: var(--fg)
+    }
+
+    .hero__title .pill .icon {
+      width: .45em;
+      height: .45em;
+      stroke-width: 1.8
+    }
+
+    .hero__text {
+      margin-top: 1.75rem;
+      max-width: 34rem;
+      font-size: 1.15rem;
+      color: #6a6d78
+    }
+
+    .hero__actions {
+      margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.25rem
+    }
+
+    .hero__note {
+      font-size: .95rem;
+      color: #6a6d78
+    }
+
 @media(min-width: 920px) {
     .hero .container {
         grid-template-columns: 1.15fr .85fr;
@@ -631,3 +701,4 @@ body::before {
     background: #fdfbf6;
     z-index: 60;
 }
+

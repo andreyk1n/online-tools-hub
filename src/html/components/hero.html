@@ -1,15 +1,53 @@
-<section class="hero">
-    <div class="hero__container">
-        <h1 class="hero__title">@@title</h1>
-        <p class="hero__desc">@@desc</p>
-        <a href="#" class="hero__button">@@buttonText</a>
+<section class="hero" aria-labelledby="hero-title">
+    <div class="container">
+        <div>
+            <h1 class="hero__title" id="hero-title">
+                <span class="line line--light">Free tools for</span>
+                <span class="line">every <span class="pill" data-tone="blue"><svg class="icon" aria-hidden="true">
+                            <use href="#i-image" />
+                        </svg></span> file,</span>
+                <span class="line">every <span class="pill" data-tone="lavender"><svg class="icon" aria-hidden="true">
+                            <use href="#i-video" />
+                        </svg></span> job.</span>
+            </h1>
+            <p class="hero__text">Compress, convert and tidy up images, video, text and code right in your browser. No
+                sign-up, no installs, no fuss.</p>
+            <div class="hero__actions">
+                <a class="btn" href="#tools">Explore Tools <svg class="icon" aria-hidden="true">
+                        <use href="#i-arrow" />
+                    </svg></a>
+                <span class="hero__note">Always free. Works on any device.</span>
+            </div>
+        </div>
+        <div class="stack" aria-hidden="true">
+            <div class="mini mini--1" data-tone="blue">
+                <div class="mini__icon"><svg class="icon" aria-hidden="true">
+                        <use href="#i-image" />
+                    </svg></div>
+                <p class="mini__name">Image Compressor</p>
+                <div class="mini__bar" style="--w:80%"></div>
+            </div>
+            <div class="mini mini--2" data-tone="lavender">
+                <div class="mini__icon"><svg class="icon" aria-hidden="true">
+                        <use href="#i-video" />
+                    </svg></div>
+                <p class="mini__name">Video to GIF</p>
+                <div class="mini__bar" style="--w:55%"></div>
+            </div>
+            <div class="mini mini--3" data-tone="green">
+                <div class="mini__icon"><svg class="icon" aria-hidden="true">
+                        <use href="#i-braces" />
+                    </svg></div>
+                <p class="mini__name">JSON Formatter</p>
+                <div class="mini__bar" style="--w:68%"></div>
+            </div>
+            <div class="mini mini--4" data-tone="beige">
+                <div class="mini__icon"><svg class="icon" aria-hidden="true">
+                        <use href="#i-text" />
+                    </svg></div>
+                <p class="mini__name">Word Counter</p>
+                <div class="mini__bar" style="--w:45%"></div>
+            </div>
+        </div>
     </div>
 </section>
-
-
-<!-- використання компонента -->
-<!-- @@include('components/hero.html', {
-"title": "Мій заголовок",
-"desc": "Опис секції",
-"buttonText": "Натисни сюди"
-}) -->
