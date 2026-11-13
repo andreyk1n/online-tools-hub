@@ -47,78 +47,587 @@
 // ==============================================================================================
 
 
-
-// Для стартових налаштувнань теми
-* {
-    margin: 0;
-    padding: 0;
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
-body {
-    font-family: $fontFamily;
-    font-size: $fontSize;
-    color: $fontColor;
-    background-color: $bgColor;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
+html {
+    -webkit-text-size-adjust: 100%;
 }
 
-.wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    justify-content: center;
-}
-
-.no-scroll {
-    overflow: hidden;
-}
-
-// Обмежуючий контейнер - цей контейнер часто зустрічається в проектах, якщо сайт має певну геометрію.
-[class*='__container'] {
-    max-width: $maxWidthContainer;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 15px
-}
-
-button {
-    cursor: pointer;
-}
-
-// Загальні стилі для списків
-ol,
-ul {
-    padding-left: 20px;
-
-    li:not(:last-child) {
-        padding-bottom: 15px;
+@media(prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
     }
 }
 
-h1 {
-    @include adaptiveValue('font-size', 60px, 24px);
+body {
+    margin: 0;
+    background: #fdfbf6;
+    color: #25272e;
+    font: 400 1rem/1.6 "Figtree", "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
-// Cтилізація ектів статусу для поточної сторінки
-.currentPage {
-    text-decoration: underline;
+img,
+svg {
+    display: block;
+    max-width: 100%;
 }
 
-// Обнулення стилів автозаповнення форми
-input {
-    background: #fff !important;
+a {
+    color: inherit;
+    text-decoration: none;
 }
 
-:-webkit-autofill,
-:-webkit-autofill:hover,
-:-webkit-autofill:focus {
-    filter: none;
-    -webkit-text-fill-color: #333;
-    -webkit-box-shadow: 0 0 0px 40rem #fff inset;
+h1,
+h2,
+h3,
+p {
+    margin: 0;
 }
 
-:-webkit-autofill::first-line {
-    font-size: 16px;
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+:focus-visible {
+    outline: 2px solid #3d5a73;
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+section[id] {
+    scroll-margin-top: 68px;
+}
+
+.container {
+    width: min(100% - 2.5rem, 1160px);
+    margin-inline: auto;
+}
+
+.skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    padding: .6rem 1rem;
+    background: #25272e;
+    color: #fdfbf6;
+    border-radius: 12px;
+}
+
+.skip-link:focus {
+    top: 1rem;
+}
+
+.icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+[data-tone=blue] {
+    --bg: #d3e0ea;
+    --fg: #3d5a73;
+}
+
+[data-tone=lavender] {
+    --bg: #e0dbf0;
+    --fg: #5a4f8a;
+}
+
+[data-tone=green] {
+    --bg: #d7e8d9;
+    --fg: #3f6a49;
+}
+
+[data-tone=beige] {
+    --bg: #f3ecdf;
+    --fg: #7a6644;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .95rem 1.6rem;
+    background: #25272e;
+    color: #fdfbf6;
+    border-radius: 999px;
+    font-weight: 600;
+    transition: transform .25s ease, background-color .25s ease;
+
+    .icon {
+        width: 1.1rem;
+        height: 1.1rem;
+        transition: transform .25s ease;
+    }
+}
+
+.btn:hover {
+    background: #3a3d47;
+    transform: translateY(-2px);
+
+    .icon {
+        transform: translateY(2px);
+    }
+}
+
+@media(prefers-reduced-motion: no-preference) {
+    .js .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition: opacity .7s ease, transform .7s ease;
+        transition-delay: calc(var(--i, 0)*60ms);
+    }
+
+    .js .reveal.is-visible {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: 68px;
+    background: rgba(253, 251, 246, .88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0);
+    transition: border-color .3s ease;
+
+    .container {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+}
+
+.site-header.is-scrolled {
+    border-color: #e9e2d4;
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    font: 700 1.1rem/1 "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    letter-spacing: -0.01em;
+
+    &__mark {
+        display: grid;
+        place-items: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 10px;
+        background: #e0dbf0;
+        color: #5a4f8a;
+    }
+}
+
+.nav {
+    display: flex;
+    gap: .25rem;
+
+    a {
+        padding: .5rem .9rem;
+        border-radius: 999px;
+        font-weight: 500;
+        color: #6a6d78;
+        transition: background-color .2s ease, color .2s ease;
+    }
+
+    a:hover {
+        background: #f3ecdf;
+        color: #25272e;
+    }
+}
+
+@media(max-width: 380px) {
+    .logo__text span {
+        display: none;
+    }
+}
+
+.hero {
+    padding: clamp(2.5rem, 7vw, 6rem) 0 clamp(3.5rem, 8vw, 7rem);
+    overflow: hidden;
+
+    .container {
+        display: grid;
+        gap: 3.5rem;
+        align-items: center;
+    }
+
+    &__title {
+        font: 800 clamp(2.9rem, 8.4vw, 6.4rem)/0.98 "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+        letter-spacing: -0.035em;
+    }
+
+    &__text {
+        margin-top: 1.75rem;
+        max-width: 34rem;
+        font-size: 1.15rem;
+        color: #6a6d78;
+    }
+
+    &__actions {
+        margin-top: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    &__note {
+        font-size: .95rem;
+        color: #6a6d78;
+    }
+}
+
+@media(min-width: 920px) {
+    .hero .container {
+        grid-template-columns: 1.15fr .85fr;
+    }
+}
+
+.stack {
+    position: relative;
+    min-height: 380px;
+    max-width: 420px;
+    width: 100%;
+    margin-inline: auto;
+}
+
+.stack::before {
+    content: "";
+    position: absolute;
+    inset: 6% 4%;
+    border-radius: 48% 52% 44% 56%/52% 44% 56% 48%;
+    background: #f3ecdf;
+}
+
+.mini {
+    position: absolute;
+    width: 52%;
+    padding: 1rem;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid #e9e2d4;
+    transform: rotate(var(--r, 0deg));
+    box-shadow: 0 10px 30px -18px rgba(37, 39, 46, .25);
+
+    &__icon {
+        display: grid;
+        place-items: center;
+        width: 2.4rem;
+        height: 2.4rem;
+        border-radius: 12px;
+        background: var(--bg);
+        color: var(--fg);
+    }
+
+    &__name {
+        margin-top: .8rem;
+        font: 600 .95rem/1.2 "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    }
+
+    &__bar {
+        margin-top: .6rem;
+        height: 6px;
+        border-radius: 6px;
+        background: var(--bg);
+        width: var(--w, 70%);
+    }
+
+    &--1 {
+        --r: -5deg;
+        left: 0;
+        top: 2%;
+    }
+
+    &--2 {
+        --r: 4deg;
+        right: 0;
+        top: 14%;
+    }
+
+    &--3 {
+        --r: 3deg;
+        left: 4%;
+        bottom: 8%;
+    }
+
+    &--4 {
+        --r: -4deg;
+        right: 2%;
+        bottom: 0;
+    }
+
+    &--2 {
+        --d: -1.8s;
+    }
+
+    &--3 {
+        --d: -3.6s;
+    }
+
+    &--4 {
+        --d: -5.2s;
+    }
+}
+
+@media(prefers-reduced-motion: no-preference) {
+    .mini {
+        animation: float 7s ease-in-out infinite;
+        animation-delay: var(--d, 0s);
+    }
+}
+
+@keyframes float {
+    50% {
+        transform: translateY(-8px) rotate(var(--r, 0deg));
+    }
+}
+
+.tools {
+    padding: clamp(3.5rem, 8vw, 6.5rem) 0;
+    background: #f3ecdf;
+    border-radius: 28px 28px 0 0;
+}
+
+.section-head {
+    max-width: 40rem;
+}
+
+.section-title {
+    font: 700 clamp(2rem, 4.6vw, 3.2rem)/1.08 "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    letter-spacing: -0.03em;
+}
+
+.section-lead {
+    margin-top: 1rem;
+    color: #6a6d78;
+    font-size: 1.1rem;
+}
+
+.filters {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.chip {
+    padding: .55rem 1.1rem;
+    border: 1px solid #ded5c3;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0);
+    font: 500 .95rem "Figtree", "Segoe UI", system-ui, sans-serif;
+    color: #25272e;
+    cursor: pointer;
+    transition: background-color .2s ease, border-color .2s ease;
+}
+
+.chip:hover {
+    background: #fdfbf6;
+}
+
+.chip[aria-pressed=true] {
+    background: #25272e;
+    border-color: #25272e;
+    color: #fdfbf6;
+}
+
+.category {
+    margin-top: 3rem;
+
+    &__title {
+        font: 600 1.35rem/1.2 "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+        margin-bottom: 1.1rem;
+    }
+}
+
+.category[hidden] {
+    display: none;
+}
+
+.grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+}
+
+@media(min-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(min-width: 960px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+    height: 100%;
+    padding: 1.4rem;
+    background: #fdfbf6;
+    border: 1px solid #e9e2d4;
+    border-radius: 20px;
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+
+    &__icon {
+        display: grid;
+        place-items: center;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 14px;
+        background: var(--bg);
+        color: var(--fg);
+        transition: transform .3s ease;
+    }
+
+    &__name {
+        font: 600 1.1rem/1.25 "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    &__desc {
+        color: #6a6d78;
+        font-size: .97rem;
+    }
+}
+
+.card:hover,
+.card:focus-visible {
+    transform: translateY(-4px);
+    border-color: var(--bg);
+    box-shadow: 0 14px 28px -20px rgba(37, 39, 46, .3);
+}
+
+.card:hover .card__icon,
+.card:focus-visible .card__icon {
+    transform: rotate(-6deg) scale(1.05);
+}
+
+.card:hover .card__name .icon,
+.card:focus-visible .card__name .icon {
+    opacity: 1;
+    transform: none;
+}
+
+@media(prefers-reduced-motion: reduce) {
+
+    .card,
+    .card__icon,
+    .btn,
+    .card__name .icon {
+        transition: none;
+    }
+
+    .card:hover,
+    .btn:hover {
+        transform: none;
+    }
+}
+
+.site-footer {
+    background: #f3ecdf;
+    padding: 3.5rem 0 2rem;
+}
+
+.footer__grid {
+    display: grid;
+    gap: 2.5rem;
+}
+
+@media(min-width: 760px) {
+    .footer__grid {
+        grid-template-columns: 1.6fr 1fr 1fr;
+    }
+}
+
+.footer__about {
+    margin-top: 1rem;
+    max-width: 22rem;
+    color: #6a6d78;
+}
+
+.footer__heading {
+    font: 600 1rem "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    margin-bottom: .9rem;
+}
+
+.footer__list {
+    display: grid;
+    gap: .55rem;
+
+    a {
+        color: #6a6d78;
+        transition: color .2s ease;
+    }
+
+    a:hover {
+        color: #25272e;
+    }
+}
+
+.footer__bottom {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ded5c3;
+    color: #6a6d78;
+    font-size: .9rem;
+}
+
+:root {
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+.site-header {
+    top: env(safe-area-inset-top, 0px);
+
+    .container {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    background: #fdfbf6;
+    z-index: 60;
 }
