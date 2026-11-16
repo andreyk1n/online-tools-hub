@@ -1,0 +1,56 @@
+.tool-intro {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(1.5rem, 3vw, 2.5rem);
+
+    &__crumb {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-bottom: 1.25rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+
+        &:hover {
+            color: var(--ink);
+        }
+
+        .icon {
+            width: 1rem;
+            height: 1rem;
+            transform: rotate(90deg);
+        }
+    }
+
+    &__title {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.25em;
+        font: 800 clamp(2.4rem, 6vw, 4.2rem) / 1 var(--display);
+        letter-spacing: -0.035em;
+    }
+
+    &__pill {
+        display: inline-grid;
+        place-items: center;
+        width: 1.5em;
+        height: 0.8em;
+        border-radius: 999px;
+        background: var(--blue);
+        color: var(--blue-ink);
+
+        .icon {
+            width: 0.44em;
+            height: 0.44em;
+        }
+    }
+
+    &__description {
+        max-width: 36rem;
+        margin-top: 1rem;
+        color: var(--muted);
+        font-size: 1.1rem;
+    }
+}
