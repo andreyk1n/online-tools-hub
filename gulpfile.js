@@ -62,16 +62,38 @@ function replaceAliases() {
     });
 }
 
+function addPageStyles() {
+  return through2.obj(function (file, _, cb) {
+    if (file.isBuffer()) {
+      const pageName = path.basename(file.path, '.html');
+
+      if (pageName === 'image-compressor') {
+        let content = file.contents.toString();
+
+        content = content.replace(
+          '</head>',
+          '  <link rel="stylesheet" href="css/pages/image-compressor.min.css">\n</head>'
+        );
+
+        file.contents = Buffer.from(content);
+      }
+    }
+
+    cb(null, file);
+  });
+}
+
 // Обробка HTML-файлів із підключенням include'ів
 function html() {
   console.log('\x1b[36m%s\x1b[0m', '📄 HTML обробляється...');
-  return gulp.src(paths.html.src)
-    .pipe(fileInclude({ prefix: '@@', basepath: 'src/html/' })) // Пошук @@include
-    .pipe(replaceAliases()) // Заміна @img/ та @bgimg/
-    .pipe(gulp.dest(paths.html.dest)) // Запис у dist/
-    .pipe(browserSync.stream()); // Оновлення сторінки
-}
 
+  return gulp.src(paths.html.src)
+    .pipe(fileInclude({ prefix: '@@', basepath: 'src/html/' }))
+    .pipe(addPageStyles())
+    .pipe(replaceAliases())
+    .pipe(gulp.dest(paths.html.dest))
+    .pipe(browserSync.stream());
+}
 // Генерація sitemap.html на основі всіх HTML-сторінок
 function sitemap(cb) {
   const links = [];

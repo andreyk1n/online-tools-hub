@@ -1,0 +1,79 @@
+<section class="tool" aria-label="Image compressor">
+    <div class="container">
+        <div class="panel">
+            <div class="drop" id="drop">
+                <div class="drop__icon"><svg class="icon" aria-hidden="true">
+                        <use href="#i-upload" />
+                    </svg></div>
+                <h2 class="drop__title">Drop your image here</h2>
+                <p class="drop__hint">JPG, PNG, WebP, SVG or AVIF · up to 50 MB</p>
+                <button class="btn" type="button" id="pick">Choose image</button>
+                <input type="file" id="file"
+                    accept=".jpg,.jpeg,.png,.webp,.svg,.avif,image/jpeg,image/png,image/webp,image/svg+xml,image/avif"
+                    hidden>
+                <div class="note note--err" id="dropError" role="alert" hidden></div>
+            </div>
+            <div class="work" id="work" hidden>
+                <div class="preview"><img id="preview" alt="Preview of the selected image"></div>
+                <div class="side">
+                    <div class="file">
+                        <div>
+                            <p class="file__name" id="fileName"></p>
+                            <p class="file__meta" id="fileMeta"></p>
+                        </div>
+                        <button class="btn btn--soft" type="button" id="replace"
+                            style="padding:.55rem 1rem;font-size:.9rem"><svg class="icon" aria-hidden="true">
+                                <use href="#i-swap" />
+                            </svg>Replace</button>
+                    </div>
+                    <fieldset style="border:0;padding:0;margin:0;min-width:0">
+                        <legend class="label">Compression level</legend>
+                        <div class="levels" id="levels">
+                            <label class="level"><input type="radio" name="lvl" value="85"
+                                    checked><span><b>Light</b><small>Quality 85%</small></span></label>
+                            <label class="level"><input type="radio" name="lvl"
+                                    value="70"><span><b>Medium</b><small>Quality 70%</small></span></label>
+                            <label class="level"><input type="radio" name="lvl"
+                                    value="50"><span><b>High</b><small>Quality 50%</small></span></label>
+                            <label class="level"><input type="radio" name="lvl"
+                                    value="30"><span><b>Maximum</b><small>Quality 30%</small></span></label>
+                            <label class="level" style="grid-column:1/-1"><input type="radio" name="lvl"
+                                    value="custom"><span><b>Custom</b><small>Set your own quality</small></span></label>
+                        </div>
+                        <div class="custom" id="custom" hidden>
+                            <div class="custom__row"><label for="range">Quality</label><b id="rangeVal">60%</b></div>
+                            <input type="range" id="range" min="5" max="100" step="1" value="60">
+                        </div>
+                    </fieldset>
+                    <div class="stats" aria-live="polite">
+                        <div class="stat"><small>Original size</small><b id="origSize">–</b></div>
+                        <div class="stat stat--blue"><small id="estLabel">Estimated size</small><b id="estSize">–</b>
+                        </div>
+                        <div class="stat stat--green stat--wide" id="resultBox" hidden>
+                            <small>Result</small><b id="resultText"></b>
+                        </div>
+                    </div>
+                    <div id="progressBox" hidden>
+                        <div class="status"><span id="progressLabel">Working…</span><span id="progressPct">0%</span>
+                        </div>
+                        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
+                            id="bar"><i id="barFill"></i></div>
+                    </div>
+                    <div class="note note--info" id="info" hidden></div>
+                    <div class="note note--warn" id="warn" hidden></div>
+                    <div class="note note--err" id="error" role="alert" hidden></div>
+                    <div class="actions">
+                        <button class="btn" type="button" id="compress"><svg class="icon" aria-hidden="true">
+                                <use href="#i-compress" />
+                            </svg>Compress Image</button>
+                        <button class="btn btn--green" type="button" id="download" disabled><svg class="icon"
+                                aria-hidden="true">
+                                <use href="#i-down" />
+                            </svg>Download Result</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="privacy">Your files are processed locally and are never uploaded or stored.</p>
+    </div>
+</section>

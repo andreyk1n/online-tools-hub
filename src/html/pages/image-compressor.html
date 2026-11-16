@@ -1,12 +1,418 @@
 @@include('partials/head.html')
 
 <div class="wrapper">
-  @@include('partials/header.html')
+    @@include('partials/header.html')
 
-  <main class="main">
-    @@include('components/intro.html')
-  </main>
+    <main class="main">
+        @@include('components/intro.html')
+        @@include('components/image-compressor.html')
+    </main>
 
-  @@include('partials/footer.html')
+    @@include('partials/footer.html')
 
+    <script>
+
+        (() => {
+
+            const $ = (id) => document.getElementById(id);
+
+            const MAX_BYTES = 50 * 1024 * 1024;
+
+            const FORMATS = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', svg: 'image/svg+xml', avif: 'image/avif' };
+
+            const EXT_OUT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/svg+xml': 'svg' };
+
+            const LABEL = { 'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WebP', 'image/svg+xml': 'SVG', 'image/avif': 'AVIF' };
+
+
+
+            const state = { file: null, type: '', outType: '', url: '', result: null, busy: false };
+
+
+
+            $('year').textContent = new Date().getFullYear();
+
+
+
+            const fmtBytes = (n) => n < 1024 ? n + ' B' : n < 1048576 ? (n / 1024).toFixed(1) + ' KB' : (n / 1048576).toFixed(2) + ' MB';
+
+            const show = (el, text) => { el.hidden = !text; if (text) el.textContent = text; };
+
+            const frame = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 60)));
+
+
+
+            // ---------- file intake ----------
+
+            const detectType = (f) => {
+
+                const ext = (f.name.split('.').pop() || '').toLowerCase();
+
+                return FORMATS[ext] || (Object.values(FORMATS).includes(f.type) ? f.type : '');
+
+            };
+
+
+
+            function loadFile(f) {
+
+                show($('dropError'), '');
+
+                if (!f) return;
+
+                const type = detectType(f);
+
+                if (!type) return show($('dropError'), 'This file type is not supported. Please choose a JPG, PNG, WebP, SVG or AVIF image.');
+
+                if (f.size === 0) return show($('dropError'), 'This file is empty. Please choose another image.');
+
+                if (f.size > MAX_BYTES) return show($('dropError'), 'This file is larger than 50 MB. Please choose a smaller image.');
+
+
+
+                if (state.url) URL.revokeObjectURL(state.url);
+
+                state.file = f; state.type = type; state.result = null;
+
+                // AVIF cannot be encoded reliably in browsers, so it is saved as WebP
+
+                state.outType = type === 'image/avif' ? 'image/webp' : type;
+
+                state.url = URL.createObjectURL(f);
+
+
+
+                const img = $('preview');
+
+                img.onerror = () => { resetToDrop(); show($('dropError'), 'We could not read this image. The file may be damaged or your browser may not support this format.'); };
+
+                img.onload = () => {
+
+                    $('fileMeta').textContent = `${LABEL[type]} · ${img.naturalWidth || '?'} × ${img.naturalHeight || '?'} px`;
+
+                };
+
+                img.src = state.url;
+
+
+
+                $('fileName').textContent = f.name;
+
+                $('fileMeta').textContent = LABEL[type];
+
+                $('origSize').textContent = fmtBytes(f.size);
+
+                $('drop').hidden = true; $('work').hidden = false;
+
+                show($('info'), type === 'image/avif' ? 'Browsers cannot reliably encode AVIF, so this image will be saved as WebP, which is also small and widely supported.' : '');
+
+                show($('warn'), ''); show($('error'), '');
+
+                $('resultBox').hidden = true; $('progressBox').hidden = true;
+
+                $('download').disabled = true; $('compress').disabled = false;
+
+                updateEstimate();
+
+            }
+
+
+
+            function resetToDrop() {
+
+                $('work').hidden = true; $('drop').hidden = false;
+
+                if (state.url) URL.revokeObjectURL(state.url); state.url = ''; state.file = null; $('file').value = '';
+
+            }
+
+
+
+            $('pick').addEventListener('click', () => $('file').click());
+
+            $('replace').addEventListener('click', () => { if (!state.busy) $('file').click(); });
+
+            $('file').addEventListener('change', (e) => { loadFile(e.target.files[0]); e.target.value = ''; });
+
+
+
+            const drop = $('drop');
+
+            ['dragenter', 'dragover'].forEach((ev) => document.addEventListener(ev, (e) => { e.preventDefault(); if (!$('drop').hidden) drop.classList.add('is-over'); }));
+
+            ['dragleave', 'drop'].forEach((ev) => document.addEventListener(ev, (e) => { e.preventDefault(); if (ev === 'drop' || e.target === drop || !e.relatedTarget) drop.classList.remove('is-over'); }));
+
+            document.addEventListener('drop', (e) => { if (!state.busy && e.dataTransfer && e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]); });
+
+
+
+            // ---------- quality & estimate ----------
+
+            const quality = () => {
+
+                const v = document.querySelector('input[name=lvl]:checked').value;
+
+                return v === 'custom' ? +$('range').value : +v;
+
+            };
+
+            function estimate(type, q, size) {
+
+                const k = q / 100;
+
+                if (type === 'image/png') return size * (0.4 + 0.6 * k);
+
+                if (type === 'image/svg+xml') return size * (0.72 + 0.22 * k);
+
+                return size * (0.06 + 0.94 * Math.pow(k, 2.2));
+
+            }
+
+            function updateEstimate() {
+
+                if (!state.file) return;
+
+                const est = Math.min(estimate(state.outType, quality(), state.file.size), state.file.size);
+
+                $('estSize').textContent = '≈ ' + fmtBytes(Math.max(1, Math.round(est)));
+
+            }
+
+            document.querySelectorAll('input[name=lvl]').forEach((r) => r.addEventListener('change', () => {
+
+                $('custom').hidden = r.value !== 'custom' || !r.checked;
+
+                invalidate(); updateEstimate();
+
+            }));
+
+            $('range').addEventListener('input', () => { $('rangeVal').textContent = $('range').value + '%'; invalidate(); updateEstimate(); });
+
+
+
+            function invalidate() { // settings changed, previous result is stale
+
+                state.result = null; $('download').disabled = true; $('resultBox').hidden = true; show($('warn'), ''); show($('error'), '');
+
+            }
+
+
+
+            // ---------- progress ----------
+
+            function progress(p, label) {
+
+                $('progressBox').hidden = false;
+
+                $('barFill').style.width = p + '%'; $('progressPct').textContent = Math.round(p) + '%';
+
+                $('bar').setAttribute('aria-valuenow', Math.round(p)); if (label) $('progressLabel').textContent = label;
+
+            }
+
+
+
+            // ---------- compression ----------
+
+            const toBlob = (canvas, type, q) => new Promise((res) => canvas.toBlob(res, type, q));
+
+
+
+            async function compressRaster(q) {
+
+                progress(15, 'Reading image…'); await frame();
+
+                let bmp;
+
+                try { bmp = await createImageBitmap(state.file); }
+
+                catch { throw new Error('We could not decode this image. The file may be damaged or unsupported by your browser.'); }
+
+                if (bmp.width * bmp.height > 100e6) throw new Error('This image is too large to process in the browser (over 100 megapixels).');
+
+
+
+                progress(40, 'Preparing pixels…'); await frame();
+
+                const canvas = document.createElement('canvas');
+
+                canvas.width = bmp.width; canvas.height = bmp.height;
+
+                const ctx = canvas.getContext('2d', { willReadFrequently: state.outType === 'image/png' });
+
+                if (!ctx) throw new Error('Your browser could not create a drawing surface for this image.');
+
+                if (state.outType === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+
+                ctx.drawImage(bmp, 0, 0); bmp.close && bmp.close();
+
+
+
+                if (state.outType === 'image/png') {
+
+                    progress(55, 'Reducing colors…'); await frame();
+
+                    const step = Math.round(1 + (100 - q) / 100 * 30);
+
+                    if (step > 1) {
+
+                        const d = ctx.getImageData(0, 0, canvas.width, canvas.height), px = d.data;
+
+                        for (let i = 0; i < px.length; i += 4) {
+
+                            px[i] = Math.min(255, Math.round(px[i] / step) * step);
+
+                            px[i + 1] = Math.min(255, Math.round(px[i + 1] / step) * step);
+
+                            px[i + 2] = Math.min(255, Math.round(px[i + 2] / step) * step);
+
+                        }
+
+                        ctx.putImageData(d, 0, 0);
+
+                    }
+
+                }
+
+                progress(75, 'Encoding…'); await frame();
+
+                const blob = await toBlob(canvas, state.outType, q / 100);
+
+                if (!blob || blob.type !== state.outType) throw new Error(`Your browser cannot encode ${LABEL[state.outType]} files. Try another browser such as Chrome, Edge or Firefox.`);
+
+                return blob;
+
+            }
+
+
+
+            async function compressSvg(q) {
+
+                progress(25, 'Reading SVG…'); await frame();
+
+                let text = await state.file.text();
+
+                const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+
+                if (doc.querySelector('parsererror') || doc.documentElement.nodeName.toLowerCase() !== 'svg') throw new Error('This SVG file is not valid and could not be processed.');
+
+                progress(55, 'Optimizing markup…'); await frame();
+
+                const prec = q > 70 ? 3 : q > 40 ? 2 : 1;
+
+                text = text
+
+                    .replace(/<\?xml[\s\S]*?\?>/g, '').replace(/<!DOCTYPE[\s\S]*?>/gi, '')
+
+                    .replace(/<!--[\s\S]*?-->/g, '')
+
+.replace(/<metadata[\s\S]*?<\/metadata>/gi, '')
+
+                            .replace(/<(sodipodi|inkscape):[^>]*\/>/g, '')
+
+                            .replace(/\s(?:inkscape|sodipodi):[\w-]+="[^"]*"/g, '')
+
+                            .replace(/(\d*\.\d+)/g, (m) => String(+(+m).toFixed(prec)))
+
+                            .replace(/>\s+</g, '><').replace(/\s{2,}/g, ' ').trim();
+
+                progress(80, 'Finishing…'); await frame();
+
+                return new Blob([text], { type: 'image/svg+xml' });
+
+            }
+
+
+
+            async function run() {
+
+                if (!state.file || state.busy) return;
+
+                state.busy = true; invalidate();
+
+                $('compress').disabled = true; $('replace').disabled = true;
+
+                try {
+
+                    const q = quality();
+
+                    const blob = state.outType === 'image/svg+xml' ? await compressSvg(q) : await compressRaster(q);
+
+                    progress(100, 'Done'); await frame();
+
+                    state.result = blob;
+
+                    const saved = (1 - blob.size / state.file.size) * 100;
+
+                    $('resultText').textContent = saved > 0
+
+                        ? `${fmtBytes(blob.size)} · ${saved.toFixed(1)}% smaller`
+
+                        : `${fmtBytes(blob.size)} · ${Math.abs(saved).toFixed(1)}% larger`;
+
+                    $('resultBox').hidden = false;
+
+                    if (saved <= 0) show($('warn'), 'The result is not smaller than the original. This image is already well optimized. Try a stronger level or keep the original file.');
+
+                    $('download').disabled = false;
+
+                } catch (err) {
+
+                    show($('error'), err.message || 'Something went wrong while compressing this image. Please try again.');
+
+                    $('progressBox').hidden = true;
+
+                } finally {
+
+                    state.busy = false; $('compress').disabled = false; $('replace').disabled = false;
+
+                }
+
+            }
+
+            $('compress').addEventListener('click', run);
+
+
+
+            // ---------- download ----------
+
+            async function save() {
+
+                if (!state.result) return;
+
+                const base = state.file.name.replace(/\.[^.]+$/, '');
+
+                const filename = `${base}-compressed.${EXT_OUT[state.outType]}`;
+
+                show($('error'), '');
+
+                try {
+
+                    const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
+
+                    if (dl) { await dl.save({ filename, data: state.result }); return; }
+
+                } catch (e) {
+
+                    if (e && e.code === 'declined') return;
+
+                    return show($('error'), 'The file could not be saved. Please try again.');
+
+                }
+
+                const a = document.createElement('a'); // standard download for regular hosting
+
+                a.href = URL.createObjectURL(state.result); a.download = filename;
+
+                document.body.appendChild(a); a.click(); a.remove();
+
+                setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+
+            }
+
+            $('download').addEventListener('click', save);
+
+        })();
+
+    </script>
 </div>
