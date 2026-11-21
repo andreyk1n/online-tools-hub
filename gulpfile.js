@@ -77,6 +77,17 @@ function addPageStyles() {
 
         file.contents = Buffer.from(content);
       }
+
+      if (pageName === 'contacts') {
+        let content = file.contents.toString();
+
+        content = content.replace(
+          '</head>',
+          '  <link rel="stylesheet" href="css/pages/contacts.min.css">\n</head>'
+        );
+
+        file.contents = Buffer.from(content);
+      }
     }
 
     cb(null, file);
