@@ -1,0 +1,252 @@
+/* hero */
+
+.hero {
+    padding: clamp(3rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 3.5rem)
+}
+
+.hero h1 {
+    font: 800 clamp(2.9rem, 8vw, 6rem)/.98 var(--display);
+    letter-spacing: -.035em
+}
+
+.hero h1 .line {
+    display: block
+}
+
+.hero h1 .light {
+    font-weight: 300;
+    letter-spacing: -.045em;
+    color: var(--muted)
+}
+
+.hero h1 .pill {
+    display: inline-grid;
+    place-items: center;
+    vertical-align: .08em;
+    margin-inline: .06em;
+    width: 1.55em;
+    height: .86em;
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--fg)
+}
+
+.hero h1 .pill .icon {
+    width: .45em;
+    height: .45em;
+    stroke-width: 1.8
+}
+
+.hero p {
+    margin-top: 1.5rem;
+    max-width: 34rem;
+    font-size: 1.15rem;
+    color: var(--muted)
+}
+
+/* contact layout */
+
+.contact {
+    padding-bottom: clamp(3.5rem, 8vw, 6rem)
+}
+
+.grid {
+    display: grid;
+    gap: 1.25rem
+}
+
+@media(min-width:960px) {
+    .grid {
+        grid-template-columns: 1fr 1.1fr;
+        align-items: stretch
+    }
+}
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem
+}
+
+.card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: clamp(1.25rem, 3vw, 1.75rem)
+}
+
+.card h2 {
+    font: 700 1.3rem/1.2 var(--display);
+    letter-spacing: -.01em;
+    margin-bottom: 1.1rem
+}
+
+.info {
+    display: grid;
+    gap: 1rem
+}
+
+.info li {
+    display: flex;
+    gap: .9rem;
+    align-items: flex-start
+}
+
+.ico {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 14px;
+    background: var(--bg);
+    color: var(--fg)
+}
+
+.info small {
+    display: block;
+    color: var(--muted);
+    font-size: .85rem;
+    line-height: 1.3;
+    margin-bottom: .15rem
+}
+
+.info b,
+.info a {
+    font: 600 1rem/1.4 var(--display)
+}
+
+.info a {
+    border-bottom: 1px solid var(--line2);
+    transition: border-color .2s
+}
+
+.info a:hover {
+    border-color: var(--ink)
+}
+
+.socials {
+    display: grid;
+    gap: .75rem
+}
+
+.social {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--milk);
+    transition: transform .3s, border-color .3s, box-shadow .3s
+}
+
+.social .ico {
+    transition: transform .3s
+}
+
+.social__text {
+    flex: 1;
+    min-width: 0
+}
+
+.social__name {
+    font: 600 1.05rem/1.25 var(--display)
+}
+
+.social__desc {
+    color: var(--muted);
+    font-size: .92rem;
+    line-height: 1.45
+}
+
+.social .go {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--muted);
+    opacity: .5;
+    transition: transform .3s, opacity .3s
+}
+
+.social:hover,
+.social:focus-visible {
+    transform: translateY(-3px);
+    border-color: var(--bg);
+    box-shadow: 0 14px 28px -20px rgba(37, 39, 46, .3)
+}
+
+.social:hover .ico {
+    transform: rotate(-6deg) scale(1.05)
+}
+
+.social:hover .go {
+    transform: translate(2px, -2px);
+    opacity: 1
+}
+
+/* map */
+
+.mapcard {
+    display: flex;
+    flex-direction: column;
+    padding: .75rem;
+    gap: .75rem
+}
+
+.map {
+    position: relative;
+    flex: 1;
+    min-height: 340px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--beige)
+}
+
+.map::before {
+    content: "Loading map…";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    font-size: .95rem
+}
+
+.map iframe {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    border: 0;
+    display: block
+}
+
+.mapfoot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem 1rem;
+    padding: 0 .5rem .35rem;
+    color: var(--muted);
+    font-size: .92rem
+}
+
+.mapfoot a {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line2);
+    transition: border-color .2s
+}
+
+.mapfoot a:hover {
+    border-color: var(--ink)
+}
+
+.mapfoot .icon {
+    width: .95rem;
+    height: .95rem
+}
