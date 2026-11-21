@@ -136,6 +136,7 @@ section[id] {
 .container {
     width: min(100% - 2.5rem, 1160px);
     margin-inline: auto;
+    max-width: 1180px;
 }
 
 .skip-link {
